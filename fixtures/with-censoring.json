@@ -1,0 +1,116 @@
+{
+  "CohortExpression": {
+    "Title": "Diabetes on Metformin with Censoring at Death",
+    "PrimaryCriteria": {
+      "CriteriaList": [
+        {
+          "DrugExposure": {
+            "CodesetId": 2,
+            "First": true,
+            "DrugTypeExclude": false
+          }
+        }
+      ],
+      "ObservationWindow": {
+        "PriorDays": 0,
+        "PostDays": 0
+      },
+      "PrimaryLimit": {
+        "Type": "First"
+      }
+    },
+    "ConceptSets": [
+      {
+        "id": 1,
+        "name": "Type 2 Diabetes",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 201826,
+                "CONCEPT_NAME": "Type 2 diabetes mellitus"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Metformin",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 1503297,
+                "CONCEPT_NAME": "metformin"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      }
+    ],
+    "QualifiedLimit": {
+      "Type": "All"
+    },
+    "ExpressionLimit": {
+      "Type": "All"
+    },
+    "InclusionRules": [
+      {
+        "name": "Has diabetes diagnosis",
+        "description": "Patients must have type 2 diabetes diagnosis",
+        "expression": {
+          "Type": "ALL",
+          "CriteriaList": [
+            {
+              "Criteria": {
+                "ConditionOccurrence": {
+                  "CodesetId": 1,
+                  "First": false,
+                  "ConditionTypeExclude": false
+                }
+              },
+              "StartWindow": {
+                "Start": {
+                  "Coeff": -1,
+                  "Days": 99999
+                },
+                "End": {
+                  "Coeff": 1,
+                  "Days": 0
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "EndStrategy": {
+      "DateOffset": {
+        "Offset": 30,
+        "DateField": "StartDate"
+      }
+    },
+    "CensoringCriteria": [
+      {
+        "Death": {
+          "CodesetId": null
+        }
+      }
+    ],
+    "CensorWindow": {
+      "StartDate": null,
+      "EndDate": null
+    },
+    "CollapseSettings": {
+      "EraPad": 30,
+      "CollapseType": "ERA"
+    }
+  }
+}

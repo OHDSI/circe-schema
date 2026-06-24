@@ -1,0 +1,26 @@
+[project]
+name = "circe-schema"
+version = "1.0.0"
+description = "Language-agnostic schema for OHDSI CIRCE cohort definitions"
+authors = [
+    { name = "OHDSI Community" },
+]
+license = { text = "Apache-2.0" }
+readme = "../README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-json>=0.4.0",
+]
+
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

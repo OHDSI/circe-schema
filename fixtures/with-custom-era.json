@@ -1,0 +1,145 @@
+{
+  "CohortExpression": {
+    "Title": "Diabetes Drug Era Cohort",
+    "PrimaryCriteria": {
+      "CriteriaList": [
+        {
+          "DrugExposure": {
+            "CodesetId": 2,
+            "First": true,
+            "DrugTypeExclude": false
+          }
+        }
+      ],
+      "ObservationWindow": {
+        "PriorDays": 0,
+        "PostDays": 0
+      },
+      "PrimaryLimit": {
+        "Type": "First"
+      }
+    },
+    "ConceptSets": [
+      {
+        "id": 1,
+        "name": "Type 2 Diabetes",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 201826,
+                "CONCEPT_NAME": "Type 2 diabetes mellitus"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Metformin",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 1503297,
+                "CONCEPT_NAME": "metformin"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "Insulin",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 19013932,
+                "CONCEPT_NAME": "Insulin"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      }
+    ],
+    "QualifiedLimit": {
+      "Type": "All"
+    },
+    "ExpressionLimit": {
+      "Type": "All"
+    },
+    "InclusionRules": [
+      {
+        "name": "Has diabetes diagnosis",
+        "description": "Patients must have type 2 diabetes diagnosis",
+        "expression": {
+          "Type": "ALL",
+          "CriteriaList": [
+            {
+              "Criteria": {
+                "ConditionOccurrence": {
+                  "CodesetId": 1,
+                  "First": false,
+                  "ConditionTypeExclude": false
+                }
+              },
+              "StartWindow": {
+                "Start": {
+                  "Coeff": -1,
+                  "Days": 99999
+                },
+                "End": {
+                  "Coeff": 1,
+                  "Days": 0
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "EndStrategy": {
+      "CustomEra": {
+        "DrugCodesetId": 2,
+        "GapDays": 30,
+        "Offset": 0,
+        "DaysSupplyOverride": null
+      }
+    },
+    "CensoringCriteria": [
+      {
+        "DrugEra": {
+          "CodesetId": 3,
+          "First": true,
+          "EraStartDate": null,
+          "EraEndDate": null,
+          "OccurrenceCount": null,
+          "GapDays": null,
+          "EraLength": null,
+          "AgeAtStart": null,
+          "AgeAtEnd": null,
+          "Gender": null,
+          "GenderCS": null
+        }
+      }
+    ],
+    "CensorWindow": {
+      "StartDate": null,
+      "EndDate": null
+    },
+    "CollapseSettings": {
+      "EraPad": 30,
+      "CollapseType": "ERA"
+    }
+  }
+}

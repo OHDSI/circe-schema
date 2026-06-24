@@ -1,0 +1,106 @@
+{
+  "CohortExpression": {
+    "Title": "Diabetes with Drug Exposure",
+    "PrimaryCriteria": {
+      "CriteriaList": [
+        {
+          "ConditionOccurrence": {
+            "CodesetId": 1,
+            "First": true,
+            "ConditionTypeExclude": false
+          }
+        },
+        {
+          "DrugExposure": {
+            "CodesetId": 2,
+            "First": true,
+            "DrugTypeExclude": false
+          }
+        },
+        {
+          "Measurement": {
+            "CodesetId": 3,
+            "First": false,
+            "MeasurementTypeExclude": false,
+            "ValueAsNumber": {
+              "Op": "gt",
+              "Value": 6.5
+            }
+          }
+        }
+      ],
+      "ObservationWindow": {
+        "PriorDays": 0,
+        "PostDays": 0
+      },
+      "PrimaryLimit": {
+        "Type": "First"
+      }
+    },
+    "ConceptSets": [
+      {
+        "id": 1,
+        "name": "Type 2 Diabetes",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 201826,
+                "CONCEPT_NAME": "Type 2 diabetes mellitus"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Metformin",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 1503297,
+                "CONCEPT_NAME": "metformin"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "HbA1c",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 3004410,
+                "CONCEPT_NAME": "Hemoglobin A1c/Hemoglobin.total in Blood"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": false
+            }
+          ]
+        }
+      }
+    ],
+    "QualifiedLimit": {
+      "Type": "All"
+    },
+    "ExpressionLimit": {
+      "Type": "All"
+    },
+    "InclusionRules": [],
+    "CensoringCriteria": [],
+    "CollapseSettings": {
+      "EraPad": 0,
+      "CollapseType": "ERA"
+    }
+  }
+}

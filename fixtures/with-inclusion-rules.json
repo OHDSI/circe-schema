@@ -1,0 +1,123 @@
+{
+  "CohortExpression": {
+    "Title": "Diabetes with Age and Gender Inclusion Rules",
+    "PrimaryCriteria": {
+      "CriteriaList": [
+        {
+          "ConditionOccurrence": {
+            "CodesetId": 1,
+            "First": true,
+            "ConditionTypeExclude": false
+          }
+        }
+      ],
+      "ObservationWindow": {
+        "PriorDays": 0,
+        "PostDays": 0
+      },
+      "PrimaryLimit": {
+        "Type": "All"
+      }
+    },
+    "AdditionalCriteria": {
+      "Type": "ALL",
+      "CriteriaList": [
+        {
+          "Criteria": {
+            "ConditionOccurrence": {
+              "CodesetId": 1,
+              "First": false,
+              "ConditionTypeExclude": false
+            }
+          },
+          "StartWindow": {
+            "Start": {
+              "Coeff": -1,
+              "Days": 365
+            },
+            "End": {
+              "Coeff": 1,
+              "Days": 0
+            }
+          },
+          "EndWindow": null
+        }
+      ]
+    },
+    "ConceptSets": [
+      {
+        "id": 1,
+        "name": "Type 2 Diabetes",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 201826,
+                "CONCEPT_NAME": "Type 2 diabetes mellitus"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      }
+    ],
+    "QualifiedLimit": {
+      "Type": "All"
+    },
+    "ExpressionLimit": {
+      "Type": "All"
+    },
+    "InclusionRules": [
+      {
+        "name": "Age at least 18",
+        "description": "Patients must be 18 years or older at cohort entry",
+        "expression": {
+          "Type": "ALL",
+          "DemographicCriteriaList": [
+            {
+              "Age": {
+                "Op": "gte",
+                "Value": 18
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Has diagnosis in prior year",
+        "description": "Patients must have had a diabetes diagnosis in the 365 days before index",
+        "expression": {
+          "Type": "ALL",
+          "CriteriaList": [
+            {
+              "Criteria": {
+                "ConditionOccurrence": {
+                  "CodesetId": 1,
+                  "First": false,
+                  "ConditionTypeExclude": false
+                }
+              },
+              "StartWindow": {
+                "Start": {
+                  "Coeff": -1,
+                  "Days": 365
+                },
+                "End": {
+                  "Coeff": -1,
+                  "Days": 1
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "CensoringCriteria": [],
+    "CollapseSettings": {
+      "EraPad": 0,
+      "CollapseType": "ERA"
+    }
+  }
+}

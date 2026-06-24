@@ -1,0 +1,54 @@
+{
+  "CohortExpression": {
+    "Title": "Minimal Type 2 Diabetes Cohort",
+    "PrimaryCriteria": {
+      "CriteriaList": [
+        {
+          "ConditionOccurrence": {
+            "CodesetId": 1,
+            "First": true,
+            "ConditionTypeExclude": false
+          }
+        }
+      ],
+      "ObservationWindow": {
+        "PriorDays": 0,
+        "PostDays": 0
+      },
+      "PrimaryLimit": {
+        "Type": "All"
+      }
+    },
+    "ConceptSets": [
+      {
+        "id": 1,
+        "name": "Type 2 Diabetes",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 201826,
+                "CONCEPT_NAME": "Type 2 diabetes mellitus"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      }
+    ],
+    "QualifiedLimit": {
+      "Type": "All"
+    },
+    "ExpressionLimit": {
+      "Type": "All"
+    },
+    "InclusionRules": [],
+    "CensoringCriteria": [],
+    "CollapseSettings": {
+      "EraPad": 0,
+      "CollapseType": "ERA"
+    }
+  }
+}

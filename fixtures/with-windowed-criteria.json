@@ -1,0 +1,107 @@
+{
+  "CohortExpression": {
+    "Title": "Diabetes with Lab Correlated Criteria",
+    "PrimaryCriteria": {
+      "CriteriaList": [
+        {
+          "ConditionOccurrence": {
+            "CodesetId": 1,
+            "First": true,
+            "ConditionTypeExclude": false
+          }
+        }
+      ],
+      "ObservationWindow": {
+        "PriorDays": 0,
+        "PostDays": 0
+      },
+      "PrimaryLimit": {
+        "Type": "All"
+      }
+    },
+    "ConceptSets": [
+      {
+        "id": 1,
+        "name": "Type 2 Diabetes",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 201826,
+                "CONCEPT_NAME": "Type 2 diabetes mellitus"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": true
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "HbA1c",
+        "expression": {
+          "items": [
+            {
+              "concept": {
+                "CONCEPT_ID": 3004410,
+                "CONCEPT_NAME": "Hemoglobin A1c/Hemoglobin.total in Blood"
+              },
+              "isExcluded": false,
+              "includeMapped": false,
+              "includeDescendants": false
+            }
+          ]
+        }
+      }
+    ],
+    "QualifiedLimit": {
+      "Type": "All"
+    },
+    "ExpressionLimit": {
+      "Type": "All"
+    },
+    "InclusionRules": [
+      {
+        "name": "Elevated HbA1c within 90 days",
+        "description": "Patients must have an HbA1c > 6.5% within 90 days before or after index",
+        "expression": {
+          "Type": "ALL",
+          "CriteriaList": [
+            {
+              "Criteria": {
+                "Measurement": {
+                  "CodesetId": 2,
+                  "First": false,
+                  "MeasurementTypeExclude": false,
+                  "ValueAsNumber": {
+                    "Op": "gt",
+                    "Value": 6.5
+                  }
+                }
+              },
+              "StartWindow": {
+                "Start": {
+                  "Coeff": -1,
+                  "Days": 90
+                },
+                "End": {
+                  "Coeff": 1,
+                  "Days": 90
+                }
+              },
+              "EndWindow": null,
+              "RestrictVisit": false,
+              "IgnoreObservationPeriod": false
+            }
+          ]
+        }
+      }
+    ],
+    "CensoringCriteria": [],
+    "CollapseSettings": {
+      "EraPad": 0,
+      "CollapseType": "ERA"
+    }
+  }
+}
