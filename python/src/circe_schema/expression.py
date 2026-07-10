@@ -22,6 +22,12 @@ else:
 
 
 class PrimaryCriteria(CirceBaseModel):
+    """Primary criteria that define cohort entry events.
+
+    Each event is defined by a domain-specific criteria object
+    (e.g. ConditionOccurrence, DrugExposure) with an observation
+    window and result limit.
+    """
     criteria_list: List[CriteriaType] = Field(
         default_factory=list,
         validation_alias=AliasChoices("CriteriaList", "criteriaList"),
@@ -40,6 +46,11 @@ class PrimaryCriteria(CirceBaseModel):
 
 
 class CohortExpression(CirceBaseModel):
+    """Main cohort expression class containing all cohort definition components.
+
+    A CohortExpression defines a cohort by specifying primary entry events,
+    inclusion rules, cohort exit strategy, and optional censoring.
+    """
     title: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("Title", "title"),
@@ -355,6 +366,7 @@ class CohortExpression(CirceBaseModel):
         return result
 
     def validate_expression(self) -> bool:
+        """Validate that the expression has at minimum primary criteria."""
         if not self.primary_criteria:
             return False
         if self.concept_sets:

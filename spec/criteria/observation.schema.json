@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/criteria/observation.schema.json",
+  "title": "CIRCE Observation Criteria Schema",
+  "description": "Observation domain criteria types for CIRCE cohort expressions. Includes Observation for clinical observation records and ObservationPeriod for patient observation periods in the OMOP CDM.",
+  "version": "1.0.0",
+  "$defs": {
+    "Observation": {
+      "allOf": [
+        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        {
+          "properties": {
+            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
+            "OccurrenceStartDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "OccurrenceEndDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "ObservationType": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "ObservationTypeCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "ObservationTypeExclude": { "default": false, "type": "boolean" },
+            "ObservationSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "ValueAsNumber": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "ValueAsString": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/TextFilter" }, { "type": "null" }], "default": null },
+            "ValueAsConcept": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "ValueAsConceptCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "Unit": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "UnitCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "Qualifier": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "QualifierCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "Age": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "Gender": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "GenderCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "VisitType": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "VisitTypeCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ObservationPeriod": {
+      "allOf": [
+        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        {
+          "properties": {
+            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
+            "PeriodStartDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "PeriodEndDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "PeriodType": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "PeriodTypeCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "UserDefinedPeriod": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/Period" }, { "type": "null" }], "default": null },
+            "PeriodLength": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "AgeAtStart": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "AgeAtEnd": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

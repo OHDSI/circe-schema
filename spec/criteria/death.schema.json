@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/criteria/death.schema.json",
+  "title": "CIRCE Death Criteria Schema",
+  "description": "Death domain criteria type for CIRCE cohort expressions. Defines Death for filtering on death records in the OMOP CDM.",
+  "version": "1.0.0",
+  "$defs": {
+    "Death": {
+      "allOf": [
+        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        {
+          "properties": {
+            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "OccurrenceStartDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "OccurrenceEndDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "DeathType": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "DeathTypeCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "DeathTypeExclude": { "default": false, "type": "boolean" },
+            "DeathSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "CauseSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "CauseSourceConceptCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "Age": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "Gender": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "GenderCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

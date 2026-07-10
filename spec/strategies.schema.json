@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/strategies.schema.json",
+  "title": "CIRCE End Strategy Schema",
+  "description": "Cohort end date strategies for CIRCE cohort expressions. Defines DateOffset and CustomEra strategies that determine when cohort episodes end.",
+  "version": "1.0.0",
+  "$defs": {
+    "DateOffsetStrategy": {
+      "description": "Date offset end strategy. Defines cohort end as a fixed offset from a date field. Serialized in JSON as: {\"DateOffset\": {...}}",
+      "properties": {
+        "Offset": { "type": "integer", "description": "Number of days to offset" },
+        "DateField": { "type": "string", "description": "Date field to offset from (e.g. 'StartDate', 'EndDate')" }
+      },
+      "required": ["Offset", "DateField"],
+      "type": "object"
+    },
+    "CustomEraStrategy": {
+      "description": "Custom era end strategy. Defines cohort end based on drug era persistence. Serialized in JSON as: {\"CustomEra\": {...}}",
+      "properties": {
+        "DrugCodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+        "GapDays": { "default": 0, "type": "integer" },
+        "Offset": { "default": 0, "type": "integer" },
+        "DaysSupplyOverride": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    }
+  }
+}

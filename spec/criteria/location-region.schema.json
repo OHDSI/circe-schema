@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/criteria/location-region.schema.json",
+  "title": "CIRCE Location Region Criteria Schema",
+  "description": "Location region domain criteria type for CIRCE cohort expressions. Defines LocationRegion for filtering on geographic location/region in the OMOP CDM.",
+  "version": "1.0.0",
+  "$defs": {
+    "LocationRegion": {
+      "allOf": [
+        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        {
+          "properties": {
+            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

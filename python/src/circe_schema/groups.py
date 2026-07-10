@@ -33,6 +33,10 @@ if TYPE_CHECKING:
 
 
 class Occurrence(CirceBaseModel):
+    """Occurrence count parameters for correlated criteria.
+
+    Defines how many times a criteria must occur (EXACTLY n, AT_MOST n, or AT_LEAST n).
+    """
     type: int = Field(
         validation_alias=AliasChoices("Type", "type"),
         serialization_alias="Type",
@@ -54,6 +58,7 @@ class Occurrence(CirceBaseModel):
 
 
 class WindowedCriteria(CirceBaseModel):
+    """A criteria with time windows defining when it must occur relative to an index date."""
     criteria: "CriteriaType" = Field(
         validation_alias=AliasChoices("Criteria", "criteria"),
         serialization_alias="Criteria",
@@ -81,6 +86,11 @@ class WindowedCriteria(CirceBaseModel):
 
 
 class CorelatedCriteria(WindowedCriteria):
+    """A criteria with occurrence parameters and time windows.
+
+    Associates a domain criteria with start/end windows and occurrence constraints.
+    NOTE: The name 'Corelated' is deliberately misspelled to match the Java implementation.
+    """
     occurrence: Optional[Occurrence] = Field(
         default=None,
         validation_alias=AliasChoices("Occurrence", "occurrence"),
@@ -89,6 +99,10 @@ class CorelatedCriteria(WindowedCriteria):
 
 
 class DemographicCriteria(CirceBaseModel):
+    """Demographic constraints for a criteria group.
+
+    Filters based on patient demographics like age, gender, race, and ethnicity.
+    """
     age: Optional[NumericRange] = Field(
         default=None,
         validation_alias=AliasChoices("Age", "age"),
@@ -137,6 +151,10 @@ class DemographicCriteria(CirceBaseModel):
 
 
 class CriteriaGroup(BaseModel):
+    """A group of criteria combined with logical operators.
+
+    Supports nested groups, demographic criteria, and occurrence counts.
+    """
     criteria_list: List["CorelatedCriteria"] = Field(
         default_factory=list,
         validation_alias=AliasChoices("CriteriaList", "criteriaList"),
@@ -166,6 +184,7 @@ class CriteriaGroup(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     def is_empty(self) -> bool:
+        """Check if this group has no criteria, subgroups, or demographics."""
         return not (
             (self.criteria_list and len(self.criteria_list) > 0)
             or (self.groups and len(self.groups) > 0)
@@ -174,6 +193,10 @@ class CriteriaGroup(BaseModel):
 
 
 class InclusionRule(CirceBaseModel):
+    """An inclusion rule determines which qualifying events become cohort records.
+
+    All rules must be satisfied (AND logic).
+    """
     expression: Optional["CriteriaGroup"] = Field(
         default=None,
         validation_alias=AliasChoices("Expression", "expression"),

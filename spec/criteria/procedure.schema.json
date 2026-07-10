@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/criteria/procedure.schema.json",
+  "title": "CIRCE Procedure Criteria Schema",
+  "description": "Procedure domain criteria type for CIRCE cohort expressions. Defines ProcedureOccurrence for filtering on procedure records in the OMOP CDM.",
+  "version": "1.0.0",
+  "$defs": {
+    "ProcedureOccurrence": {
+      "allOf": [
+        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        {
+          "properties": {
+            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
+            "OccurrenceStartDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "OccurrenceEndDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "ProcedureType": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "ProcedureTypeCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "ProcedureTypeExclude": { "default": false, "type": "boolean" },
+            "ProcedureSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "Quantity": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "Age": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "Gender": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "GenderCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "VisitType": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "VisitTypeCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "Modifier": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "ModifierCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 
 class Concept(BaseModel):
+    """A concept from the OMOP standardized vocabulary."""
     concept_id: Optional[int] = Field(
         default=None,
         validation_alias=AliasChoices("ConceptId", "CONCEPT_ID", "conceptId"),
@@ -49,6 +50,7 @@ class Concept(BaseModel):
 
 
 class ConceptSetItem(BaseModel):
+    """An individual item within a concept set expression."""
     concept: Optional[Concept] = None
     is_excluded: bool = Field(default=False, alias="isExcluded")
     include_mapped: bool = Field(default=False, alias="includeMapped")
@@ -58,6 +60,7 @@ class ConceptSetItem(BaseModel):
 
 
 class ConceptSetExpression(BaseModel):
+    """Defines the inclusion criteria for a concept set, including explicit concepts and hierarchical relationships."""
     concept: Optional[Concept] = None
     is_excluded: bool = Field(default=False, alias="isExcluded")
     include_mapped: bool = Field(default=False, alias="includeMapped")
@@ -68,6 +71,7 @@ class ConceptSetExpression(BaseModel):
 
 
 class ConceptSet(BaseModel):
+    """A named set of concepts with an expression defining inclusion criteria."""
     id: int = Field(
         alias="id",
         validation_alias=AliasChoices("id", "ID"),

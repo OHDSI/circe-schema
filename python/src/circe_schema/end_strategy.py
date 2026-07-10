@@ -6,6 +6,10 @@ from .base import CirceBaseModel
 
 
 class EndStrategy(CirceBaseModel):
+    """Base class for cohort end date strategies.
+
+    Serialized polymorphically: ``{"DateOffset": {...}}`` or ``{"CustomEra": {...}}``.
+    """
     @model_serializer(mode="wrap")
     def _serialize_polymorphic(self, serializer, info):
         data = serializer(self)
@@ -17,6 +21,7 @@ class EndStrategy(CirceBaseModel):
 
 
 class DateOffsetStrategy(EndStrategy):
+    """Date offset end strategy. Defines cohort end as a fixed offset from a date field."""
     offset: int = Field(
         validation_alias=AliasChoices("Offset", "offset"),
         serialization_alias="Offset",
@@ -28,6 +33,7 @@ class DateOffsetStrategy(EndStrategy):
 
 
 class CustomEraStrategy(EndStrategy):
+    """Custom era end strategy. Defines cohort end based on drug era persistence."""
     drug_codeset_id: Optional[int] = Field(
         default=None,
         validation_alias=AliasChoices("DrugCodesetId", "drugCodesetId"),

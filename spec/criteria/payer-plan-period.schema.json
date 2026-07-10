@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/criteria/payer-plan-period.schema.json",
+  "title": "CIRCE Payer Plan Period Criteria Schema",
+  "description": "Payer plan period domain criteria type for CIRCE cohort expressions. Defines PayerPlanPeriod for filtering on insurance/payer plan period records in the OMOP CDM.",
+  "version": "1.0.0",
+  "$defs": {
+    "PayerPlanPeriod": {
+      "allOf": [
+        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        {
+          "properties": {
+            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
+            "PeriodStartDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "PeriodEndDate": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+            "UserDefinedPeriod": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/Period" }, { "type": "null" }], "default": null },
+            "PeriodLength": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "AgeAtStart": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "AgeAtEnd": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+            "Gender": { "anyOf": [{ "items": { "$ref": "../vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+            "GenderCS": { "anyOf": [{ "$ref": "../common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+            "PayerConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "PlanConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "SponsorConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "StopReasonConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "PayerSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "PlanSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "SponsorSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+            "StopReasonSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/vocabulary.schema.json",
+  "title": "CIRCE Vocabulary Schema",
+  "description": "OMOP standardized vocabulary types used by CIRCE cohort expressions. Defines Concept, ConceptSet, and related structures for referencing OMOP concepts.",
+  "version": "1.0.0",
+  "$defs": {
+    "Concept": {
+      "description": "A concept from the OMOP standardized vocabulary.",
+      "properties": {
+        "CONCEPT_ID": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+        "CONCEPT_NAME": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "CONCEPT_CODE": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "CONCEPT_CLASS_ID": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "STANDARD_CONCEPT": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "INVALID_REASON": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "DOMAIN_ID": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "VOCABULARY_ID": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "ConceptSetItem": {
+      "description": "An individual item within a concept set expression.",
+      "properties": {
+        "concept": { "anyOf": [{ "$ref": "#/$defs/Concept" }, { "type": "null" }], "default": null },
+        "isExcluded": { "default": false, "type": "boolean" },
+        "includeMapped": { "default": false, "type": "boolean" },
+        "includeDescendants": { "default": false, "type": "boolean" }
+      },
+      "type": "object"
+    },
+    "ConceptSetExpression": {
+      "description": "Defines the inclusion criteria for a concept set, including explicit concepts and hierarchical relationships.",
+      "properties": {
+        "items": { "anyOf": [{ "items": { "$ref": "#/$defs/ConceptSetItem" }, "type": "array" }, { "type": "null" }], "default": null },
+        "concept": { "anyOf": [{ "$ref": "#/$defs/Concept" }, { "type": "null" }], "default": null },
+        "isExcluded": { "default": false, "type": "boolean" },
+        "includeMapped": { "default": false, "type": "boolean" },
+        "includeDescendants": { "default": false, "type": "boolean" }
+      },
+      "type": "object"
+    },
+    "ConceptSet": {
+      "description": "A named set of concepts with an expression defining inclusion criteria.",
+      "properties": {
+        "id": { "type": "integer", "description": "Unique identifier referencing this concept set from criteria" },
+        "name": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "expression": { "anyOf": [{ "$ref": "#/$defs/ConceptSetExpression" }, { "type": "null" }], "default": null }
+      },
+      "required": ["id"],
+      "type": "object"
+    }
+  }
+}

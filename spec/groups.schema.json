@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/groups.schema.json",
+  "title": "CIRCE Groups Schema",
+  "description": "Criteria grouping and windowing constructs for CIRCE cohort expressions. Defines how criteria are combined with logical operators, time windows, and occurrence constraints.",
+  "version": "1.0.0",
+  "$defs": {
+    "Occurrence": {
+      "description": "Occurrence count parameters for correlated criteria. Defines how many times a criteria must occur (EXACTLY n, AT_MOST n, or AT_LEAST n).",
+      "properties": {
+        "Type": { "type": "integer", "description": "0=EXACTLY, 1=AT_MOST, 2=AT_LEAST" },
+        "Count": { "type": "integer" },
+        "IsDistinct": { "default": false, "type": "boolean" },
+        "CountColumn": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
+      },
+      "required": ["Type", "Count"],
+      "type": "object"
+    },
+    "WindowedCriteria": {
+      "description": "A criteria with time windows defining when it must occur relative to an index date.",
+      "properties": {
+        "Criteria": { "$ref": "./common.schema.json#/$defs/Criteria" },
+        "StartWindow": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/Window" }, { "type": "null" }], "default": null },
+        "EndWindow": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/Window" }, { "type": "null" }], "default": null },
+        "RestrictVisit": { "default": false, "type": "boolean" },
+        "IgnoreObservationPeriod": { "default": false, "type": "boolean" }
+      },
+      "required": ["Criteria"],
+      "type": "object"
+    },
+    "CorelatedCriteria": {
+      "description": "A criteria with occurrence parameters and time windows. Associates a domain criteria with start/end windows and occurrence constraints. NOTE: The name 'Corelated' is deliberately misspelled to match the Java implementation.",
+      "allOf": [
+        { "$ref": "#/$defs/WindowedCriteria" },
+        {
+          "properties": {
+            "Occurrence": { "anyOf": [{ "$ref": "#/$defs/Occurrence" }, { "type": "null" }], "default": null }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "DemographicCriteria": {
+      "description": "Demographic constraints for a criteria group. Filters based on patient demographics like age, gender, race, and ethnicity.",
+      "properties": {
+        "Age": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/NumericRange" }, { "type": "null" }], "default": null },
+        "Gender": { "anyOf": [{ "items": { "$ref": "./vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+        "GenderCS": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+        "Race": { "anyOf": [{ "items": { "$ref": "./vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+        "RaceCS": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+        "Ethnicity": { "anyOf": [{ "items": { "$ref": "./vocabulary.schema.json#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
+        "EthnicityCS": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
+        "OccurrenceStartDate": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null },
+        "OccurrenceEndDate": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/DateRange" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "CriteriaGroup": {
+      "description": "A group of criteria combined with logical operators. Supports nested groups, demographic criteria, and occurrence counts.",
+      "properties": {
+        "Type": {
+          "anyOf": [{ "type": "string" }, { "type": "null" }],
+          "default": null,
+          "description": "Logical operator: 'ALL' for AND, 'ANY' for OR, 'AT_LEAST' for count-based"
+        },
+        "Count": {
+          "anyOf": [{ "type": "integer" }, { "type": "null" }],
+          "default": null,
+          "description": "Minimum count when Type is 'AT_LEAST'"
+        },
+        "CriteriaList": {
+          "anyOf": [{ "items": { "$ref": "#/$defs/CorelatedCriteria" }, "type": "array" }, { "type": "null" }],
+          "default": null
+        },
+        "Groups": {
+          "anyOf": [{ "items": { "$ref": "#/$defs/CriteriaGroup" }, "type": "array" }, { "type": "null" }],
+          "default": null
+        },
+        "DemographicCriteriaList": {
+          "anyOf": [{ "items": { "$ref": "#/$defs/DemographicCriteria" }, "type": "array" }, { "type": "null" }],
+          "default": null
+        }
+      },
+      "type": "object"
+    }
+  }
+}

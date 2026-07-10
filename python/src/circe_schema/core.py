@@ -7,17 +7,20 @@ from .base import CirceBaseModel
 
 
 class CollapseType(str, Enum):
+    """Collapse strategy for overlapping cohort episodes."""
     ERA = "ERA"
     COLLAPSE = "collapse"
     NO_COLLAPSE = "no_collapse"
 
 
 class DateType(str, Enum):
+    """Date type reference for date adjustments."""
     START_DATE = "start_date"
     END_DATE = "end_date"
 
 
 class ResultLimit(CirceBaseModel):
+    """Specifies a limit type for qualifying events or the final expression."""
     type: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("Type", "type"),
@@ -26,6 +29,7 @@ class ResultLimit(CirceBaseModel):
 
 
 class Period(CirceBaseModel):
+    """A time period with optional start and end dates."""
     start_date: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("StartDate", "startDate"),
@@ -39,6 +43,7 @@ class Period(CirceBaseModel):
 
 
 class DateRange(CirceBaseModel):
+    """A date-based range filter with an operator, value, and optional extent."""
     op: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("Op", "op"),
@@ -57,6 +62,7 @@ class DateRange(CirceBaseModel):
 
 
 class NumericRange(CirceBaseModel):
+    """A numeric range filter with an operator, value, and optional extent."""
     op: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("Op", "op"),
@@ -75,6 +81,7 @@ class NumericRange(CirceBaseModel):
 
 
 class DateAdjustment(CirceBaseModel):
+    """Adjusts start and end dates by a fixed offset, optionally switching to a different date type."""
     start_offset: int = Field(
         validation_alias=AliasChoices("startOffset", "StartOffset"),
         serialization_alias="startOffset",
@@ -96,6 +103,7 @@ class DateAdjustment(CirceBaseModel):
 
 
 class ObservationFilter(CirceBaseModel):
+    """Defines the observation window around the index date for primary criteria."""
     prior_days: int = Field(
         validation_alias=AliasChoices("PriorDays", "priorDays"),
         serialization_alias="PriorDays",
@@ -107,6 +115,7 @@ class ObservationFilter(CirceBaseModel):
 
 
 class CollapseSettings(CirceBaseModel):
+    """Settings for collapsing overlapping cohort episodes into contiguous periods."""
     era_pad: int = Field(
         validation_alias=AliasChoices("EraPad", "eraPad"),
         serialization_alias="EraPad",
@@ -119,6 +128,7 @@ class CollapseSettings(CirceBaseModel):
 
 
 class ConceptSetSelection(CirceBaseModel):
+    """Selects a concept set by ID, optionally as an exclusion."""
     codeset_id: Optional[int] = Field(
         default=None,
         validation_alias=AliasChoices("CodesetId", "codesetId"),
@@ -132,6 +142,7 @@ class ConceptSetSelection(CirceBaseModel):
 
 
 class TextFilter(CirceBaseModel):
+    """A text-based filter with comparison operator."""
     text: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("Text", "text"),
@@ -145,6 +156,7 @@ class TextFilter(CirceBaseModel):
 
 
 class WindowBound(CirceBaseModel):
+    """A single bound of a time window, with a coefficient (before/after) and optional number of days."""
     coeff: int = Field(
         validation_alias=AliasChoices("Coeff", "coeff"),
         serialization_alias="Coeff",
@@ -157,6 +169,7 @@ class WindowBound(CirceBaseModel):
 
 
 class Window(CirceBaseModel):
+    """A time window with start and end bounds relative to an index date."""
     start: Optional[WindowBound] = Field(
         default=None,
         validation_alias=AliasChoices("Start", "start"),

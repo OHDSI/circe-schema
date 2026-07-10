@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/common.schema.json",
+  "title": "CIRCE Common Schema",
+  "description": "Shared primitive types and the base Criteria class for the CIRCE cohort expression data model. These types are used across all criteria, groups, and strategies.",
+  "version": "1.0.0",
+  "$defs": {
+    "ResultLimit": {
+      "description": "Specifies a limit type for qualifying events or the final expression.",
+      "properties": {
+        "Type": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "Period": {
+      "description": "A time period with optional start and end dates.",
+      "properties": {
+        "StartDate": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "EndDate": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "DateRange": {
+      "description": "A date-based range filter with an operator, value, and optional extent.",
+      "properties": {
+        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "Value": { "anyOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }], "default": null },
+        "Extent": { "anyOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "NumericRange": {
+      "description": "A numeric range filter with an operator, value, and optional extent.",
+      "properties": {
+        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "Value": { "anyOf": [{ "type": "integer" }, { "type": "number" }, { "type": "null" }], "default": null },
+        "Extent": { "anyOf": [{ "type": "integer" }, { "type": "number" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "DateAdjustment": {
+      "description": "Adjusts start and end dates by a fixed offset, optionally switching to a different date type.",
+      "properties": {
+        "startOffset": { "type": "integer" },
+        "endOffset": { "type": "integer" },
+        "startWith": { "anyOf": [{ "$ref": "#/$defs/DateType" }, { "type": "null" }], "default": null },
+        "endWith": { "anyOf": [{ "$ref": "#/$defs/DateType" }, { "type": "null" }], "default": null }
+      },
+      "required": ["startOffset", "endOffset"],
+      "type": "object"
+    },
+    "ObservationFilter": {
+      "description": "Defines the observation window around the index date for primary criteria.",
+      "properties": {
+        "PriorDays": { "type": "integer" },
+        "PostDays": { "type": "integer" }
+      },
+      "required": ["PriorDays", "PostDays"],
+      "type": "object"
+    },
+    "CollapseSettings": {
+      "description": "Settings for collapsing overlapping cohort episodes into contiguous periods.",
+      "properties": {
+        "EraPad": { "type": "integer" },
+        "CollapseType": { "anyOf": [{ "$ref": "#/$defs/CollapseType" }, { "type": "null" }], "default": null }
+      },
+      "required": ["EraPad"],
+      "type": "object"
+    },
+    "Window": {
+      "description": "A time window with start and end bounds relative to an index date.",
+      "properties": {
+        "Start": { "anyOf": [{ "$ref": "#/$defs/WindowBound" }, { "type": "null" }], "default": null },
+        "End": { "anyOf": [{ "$ref": "#/$defs/WindowBound" }, { "type": "null" }], "default": null },
+        "UseEventEnd": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
+        "UseIndexEnd": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "WindowBound": {
+      "description": "A single bound of a time window, with a coefficient (before/after) and optional number of days.",
+      "properties": {
+        "Coeff": { "type": "integer", "description": "Direction: -1 = before, 1 = after" },
+        "Days": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
+      },
+      "required": ["Coeff"],
+      "type": "object"
+    },
+    "TextFilter": {
+      "description": "A text-based filter with comparison operator.",
+      "properties": {
+        "Text": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
+      },
+      "type": "object"
+    },
+    "ConceptSetSelection": {
+      "description": "Selects a concept set by ID, optionally as an exclusion.",
+      "properties": {
+        "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+        "IsExclusion": { "type": "boolean" }
+      },
+      "required": ["IsExclusion"],
+      "type": "object"
+    },
+    "DateType": {
+      "description": "Enumeration of date types used in DateAdjustment.",
+      "enum": ["start_date", "end_date"],
+      "type": "string"
+    },
+    "CollapseType": {
+      "description": "Enumeration of collapse types.",
+      "enum": ["ERA", "collapse", "no_collapse"],
+      "type": "string"
+    },
+    "Criteria": {
+      "description": "Base criteria type. All domain-specific criteria inherit from this. In JSON, each criteria is serialized with a polymorphic wrapper: {\"ConditionOccurrence\": {...}}. The discriminator is the single key in the object. Polymorphic base: each concrete type extends this with domain-specific fields and wraps in {\"TypeName\": {...}}",
+      "properties": {
+        "DateAdjustment": {
+          "anyOf": [{ "$ref": "#/$defs/DateAdjustment" }, { "type": "null" }],
+          "default": null
+        },
+        "CorrelatedCriteria": {
+          "anyOf": [{ "$ref": "./groups.schema.json#/$defs/CriteriaGroup" }, { "type": "null" }],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "GeoCriteria": {
+      "description": "Base class for geographic criteria (extends Criteria).",
+      "allOf": [
+        { "$ref": "#/$defs/Criteria" },
+        { "properties": {}, "type": "object" }
+      ]
+    }
+  }
+}

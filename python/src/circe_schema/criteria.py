@@ -18,6 +18,12 @@ if TYPE_CHECKING:
 
 
 class Criteria(CirceBaseModel):
+    """Base criteria type for all domain-specific cohort entry criteria.
+
+    All domain-specific criteria inherit from this. In JSON, each criteria is serialized
+    with a polymorphic wrapper: ``{"ConditionOccurrence": {...}}``. The discriminator
+    is the single key in the object.
+    """
     date_adjustment: Optional[DateAdjustment] = Field(
         default=None,
         validation_alias=AliasChoices("DateAdjustment", "dateAdjustment"),
@@ -37,12 +43,8 @@ class Criteria(CirceBaseModel):
         return data
 
 
-# ---------------------------------------------------------------------------
-# Domain Criteria Classes
-# ---------------------------------------------------------------------------
-
-
 class ConditionOccurrence(Criteria):
+    """Condition occurrence criteria. Filters on condition diagnosis records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -64,6 +66,7 @@ class ConditionOccurrence(Criteria):
 
 
 class DrugExposure(Criteria):
+    """Drug exposure criteria. Filters on drug administration records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -92,6 +95,7 @@ class DrugExposure(Criteria):
 
 
 class ProcedureOccurrence(Criteria):
+    """Procedure occurrence criteria. Filters on procedure records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -113,6 +117,7 @@ class ProcedureOccurrence(Criteria):
 
 
 class VisitOccurrence(Criteria):
+    """Visit occurrence criteria. Filters on visit records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -133,6 +138,7 @@ class VisitOccurrence(Criteria):
 
 
 class Observation(Criteria):
+    """Observation criteria. Filters on observation records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -159,6 +165,7 @@ class Observation(Criteria):
 
 
 class Measurement(Criteria):
+    """Measurement criteria. Filters on measurement records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -190,6 +197,7 @@ class Measurement(Criteria):
 
 
 class DeviceExposure(Criteria):
+    """Device exposure criteria. Filters on device exposure records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -210,6 +218,7 @@ class DeviceExposure(Criteria):
 
 
 class Specimen(Criteria):
+    """Specimen criteria. Filters on specimen records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
@@ -232,6 +241,7 @@ class Specimen(Criteria):
 
 
 class Death(Criteria):
+    """Death criteria. Filters on death records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     occurrence_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceStartDate", "occurrenceStartDate"), serialization_alias="OccurrenceStartDate")
     occurrence_end_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("OccurrenceEndDate", "occurrenceEndDate"), serialization_alias="OccurrenceEndDate")
@@ -247,6 +257,7 @@ class Death(Criteria):
 
 
 class VisitDetail(Criteria):
+    """Visit detail criteria. Filters on visit detail records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     visit_detail_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("VisitDetailStartDate", "visitDetailStartDate"), serialization_alias="VisitDetailStartDate")
@@ -269,6 +280,7 @@ class VisitDetail(Criteria):
 
 
 class ObservationPeriod(Criteria):
+    """Observation period criteria. Filters on observation period records in the OMOP CDM."""
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     period_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("PeriodStartDate", "periodStartDate"), serialization_alias="PeriodStartDate")
     period_end_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("PeriodEndDate", "periodEndDate"), serialization_alias="PeriodEndDate")
@@ -281,6 +293,7 @@ class ObservationPeriod(Criteria):
 
 
 class PayerPlanPeriod(Criteria):
+    """Payer plan period criteria. Filters on payer plan period records in the OMOP CDM."""
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     period_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("PeriodStartDate", "periodStartDate"), serialization_alias="PeriodStartDate")
     period_end_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("PeriodEndDate", "periodEndDate"), serialization_alias="PeriodEndDate")
@@ -301,10 +314,12 @@ class PayerPlanPeriod(Criteria):
 
 
 class LocationRegion(Criteria):
+    """Location region criteria. Filters on geographic location/region in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
 
 
 class ConditionEra(Criteria):
+    """Condition era criteria. Filters on condition era records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     era_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("EraStartDate", "eraStartDate"), serialization_alias="EraStartDate")
@@ -318,6 +333,7 @@ class ConditionEra(Criteria):
 
 
 class DrugEra(Criteria):
+    """Drug era criteria. Filters on drug era records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     era_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("EraStartDate", "eraStartDate"), serialization_alias="EraStartDate")
@@ -332,6 +348,7 @@ class DrugEra(Criteria):
 
 
 class DoseEra(Criteria):
+    """Dose era criteria. Filters on dose era records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
     era_start_date: Optional[DateRange] = Field(default=None, validation_alias=AliasChoices("EraStartDate", "eraStartDate"), serialization_alias="EraStartDate")
@@ -345,10 +362,6 @@ class DoseEra(Criteria):
     gender: Optional[List[Concept]] = Field(default=None, validation_alias=AliasChoices("Gender", "gender"), serialization_alias="Gender")
     gender_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("GenderCS", "genderCS"), serialization_alias="GenderCS")
 
-
-# =============================================================================
-# Model rebuilds to resolve forward references to CriteriaGroup
-# =============================================================================
 
 _criteria_all = [
     ConditionOccurrence, DrugExposure, ProcedureOccurrence,

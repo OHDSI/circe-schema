@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/OHDSI/circe-schema/spec/cohort-expression.schema.json",
   "title": "CIRCE Cohort Expression Schema",
-  "description": "Language-agnostic schema for OMOP CDM cohort definitions. This schema defines the data model for cohort expressions in the OHDSI CIRCE ecosystem. Implementers in any language should use this schema as the single source of truth.",
+  "description": "Language-agnostic schema for OMOP CDM cohort definitions. This schema defines the data model for cohort expressions in the OHDSI CIRCE ecosystem. Implementers in any language should use this schema as the single source of truth. This root schema imports sub-schemas for criteria, vocabulary, groups, strategies, and common types.",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -26,22 +26,22 @@
           "description": "Criteria that define cohort entry events"
         },
         "AdditionalCriteria": {
-          "anyOf": [{ "$ref": "#/$defs/CriteriaGroup" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./groups.schema.json#/$defs/CriteriaGroup" }, { "type": "null" }],
           "default": null,
           "description": "Additional criteria applied to all cohort entry events"
         },
         "ConceptSets": {
-          "anyOf": [{ "items": { "$ref": "#/$defs/ConceptSet" }, "type": "array" }, { "type": "null" }],
+          "anyOf": [{ "items": { "$ref": "./vocabulary.schema.json#/$defs/ConceptSet" }, "type": "array" }, { "type": "null" }],
           "default": null,
           "description": "Concept sets referenced by criteria"
         },
         "QualifiedLimit": {
-          "anyOf": [{ "$ref": "#/$defs/ResultLimit" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./common.schema.json#/$defs/ResultLimit" }, { "type": "null" }],
           "default": null,
           "description": "Limit for qualifying events (events that pass additional criteria)"
         },
         "ExpressionLimit": {
-          "anyOf": [{ "$ref": "#/$defs/ResultLimit" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./common.schema.json#/$defs/ResultLimit" }, { "type": "null" }],
           "default": null,
           "description": "Limit for the final cohort expression"
         },
@@ -52,25 +52,25 @@
         },
         "EndStrategy": {
           "anyOf": [
-            { "$ref": "#/$defs/DateOffsetStrategy" },
-            { "$ref": "#/$defs/CustomEraStrategy" },
+            { "$ref": "./strategies.schema.json#/$defs/DateOffsetStrategy" },
+            { "$ref": "./strategies.schema.json#/$defs/CustomEraStrategy" },
             { "type": "null" }
           ],
           "default": null,
           "description": "Strategy for determining cohort end dates. Polymorphic: use {\"DateOffset\":{...}} or {\"CustomEra\":{...}}"
         },
         "CensoringCriteria": {
-          "anyOf": [{ "items": { "$ref": "#/$defs/Criteria" }, "type": "array" }, { "type": "null" }],
+          "anyOf": [{ "items": { "$ref": "./common.schema.json#/$defs/Criteria" }, "type": "array" }, { "type": "null" }],
           "default": null,
           "description": "Criteria that censor (end) cohort episodes early"
         },
         "CollapseSettings": {
-          "anyOf": [{ "$ref": "#/$defs/CollapseSettings" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./common.schema.json#/$defs/CollapseSettings" }, { "type": "null" }],
           "default": null,
           "description": "Settings for collapsing overlapping cohort episodes"
         },
         "CensorWindow": {
-          "anyOf": [{ "$ref": "#/$defs/Period" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./common.schema.json#/$defs/Period" }, { "type": "null" }],
           "default": null,
           "description": "Window within which censoring criteria apply"
         },
@@ -86,470 +86,20 @@
       "description": "Primary criteria that define cohort entry events. Each event is defined by a domain-specific criteria object (e.g. ConditionOccurrence, DrugExposure).",
       "properties": {
         "CriteriaList": {
-          "items": { "$ref": "#/$defs/Criteria" },
+          "items": { "$ref": "./common.schema.json#/$defs/Criteria" },
           "type": "array",
           "description": "List of domain-specific criteria wrapped in their type name"
         },
         "ObservationWindow": {
-          "anyOf": [{ "$ref": "#/$defs/ObservationFilter" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./common.schema.json#/$defs/ObservationFilter" }, { "type": "null" }],
           "default": null,
           "description": "Observation window relative to the cohort index date"
         },
         "PrimaryLimit": {
-          "anyOf": [{ "$ref": "#/$defs/ResultLimit" }, { "type": "null" }],
+          "anyOf": [{ "$ref": "./common.schema.json#/$defs/ResultLimit" }, { "type": "null" }],
           "default": null,
           "description": "Limit for primary events (e.g. 'First', 'All')"
         }
-      },
-      "type": "object"
-    },
-    "Criteria": {
-      "description": "Base criteria type. All domain-specific criteria inherit from this. In JSON, each criteria is serialized with a polymorphic wrapper: {\"ConditionOccurrence\": {...}}. The discriminator is the single key in the object.",
-      "properties": {
-        "DateAdjustment": {
-          "anyOf": [{ "$ref": "#/$defs/DateAdjustment" }, { "type": "null" }],
-          "default": null
-        },
-        "CorrelatedCriteria": {
-          "anyOf": [{ "$ref": "#/$defs/CriteriaGroup" }, { "type": "null" }],
-          "default": null
-        }
-      },
-      "type": "object",
-      "description": "Polymorphic base: each concrete type extends this with domain-specific fields and wraps in {\"TypeName\": {...}}"
-    },
-    "ConditionOccurrence": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "ConditionType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ConditionTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ConditionTypeExclude": { "default": false, "type": "boolean" },
-            "StopReason": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null },
-            "ConditionSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ConditionStatus": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ConditionStatusCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "DrugExposure": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "DrugType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "DrugTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "DrugTypeExclude": { "default": false, "type": "boolean" },
-            "DrugSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "StopReason": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "RouteConcept": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "RouteConceptCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Quantity": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "DaysSupply": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Refills": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "EffectiveDrugDose": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "DoseUnit": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "DoseUnitCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "LotNumber": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "ProcedureOccurrence": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "ProcedureType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProcedureTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProcedureTypeExclude": { "default": false, "type": "boolean" },
-            "ProcedureSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Quantity": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Modifier": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ModifierCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "VisitOccurrence": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitTypeExclude": { "default": false, "type": "boolean" },
-            "VisitSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "VisitLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "PlaceOfService": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "PlaceOfServiceCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "PlaceOfServiceLocation": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "Observation": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "ObservationType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ObservationTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ObservationTypeExclude": { "default": false, "type": "boolean" },
-            "ObservationSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "ValueAsNumber": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "ValueAsString": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null },
-            "ValueAsConcept": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ValueAsConceptCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Unit": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "UnitCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Qualifier": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "QualifierCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "Measurement": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "MeasurementType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "MeasurementTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "MeasurementTypeExclude": { "default": false, "type": "boolean" },
-            "MeasurementSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "ValueAsNumber": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "ValueAsString": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null },
-            "ValueAsConcept": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ValueAsConceptCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Operator": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "OperatorCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Unit": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "UnitCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "RangeLow": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "RangeHigh": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "RangeLowRatio": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "RangeHighRatio": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Abnormal": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "DeviceExposure": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "DeviceType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "DeviceTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "DeviceTypeExclude": { "default": false, "type": "boolean" },
-            "DeviceSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "UniqueDeviceId": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null },
-            "Quantity": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "Specimen": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "SpecimenType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "SpecimenTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "SpecimenTypeExclude": { "default": false, "type": "boolean" },
-            "SpecimenSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "Quantity": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Unit": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "UnitCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "AnatomicSite": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "AnatomicSiteCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "DiseaseStatus": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "DiseaseStatusCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "SourceId": { "anyOf": [{ "$ref": "#/$defs/TextFilter" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "Death": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "DeathType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "DeathTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "DeathTypeExclude": { "default": false, "type": "boolean" },
-            "DeathSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "CauseSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "CauseSourceConceptCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "VisitDetail": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "VisitDetailStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "VisitDetailEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "VisitDetailType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "VisitDetailTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "VisitDetailTypeExclude": { "default": false, "type": "boolean" },
-            "VisitDetailSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "VisitDetailLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "ProviderSpecialty": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "ProviderSpecialtyCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "PlaceOfService": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "PlaceOfServiceCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "PlaceOfServiceLocation": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "DischargeTo": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "DischargeToCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "ObservationPeriod": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "PeriodStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "PeriodEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "PeriodType": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "PeriodTypeCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "UserDefinedPeriod": { "anyOf": [{ "$ref": "#/$defs/Period" }, { "type": "null" }], "default": null },
-            "PeriodLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtStart": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtEnd": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "PayerPlanPeriod": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "PeriodStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "PeriodEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "UserDefinedPeriod": { "anyOf": [{ "$ref": "#/$defs/Period" }, { "type": "null" }], "default": null },
-            "PeriodLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtStart": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtEnd": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "PayerConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "PlanConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "SponsorConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "StopReasonConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "PayerSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "PlanSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "SponsorSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "StopReasonSourceConcept": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "LocationRegion": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "ConditionEra": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "EraStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "EraEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceCount": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "EraLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtStart": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtEnd": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "DrugEra": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "EraStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "EraEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "OccurrenceCount": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "GapDays": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "EraLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtStart": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtEnd": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "DoseEra": {
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        {
-          "properties": {
-            "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-            "First": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-            "EraStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "EraEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-            "Unit": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "UnitCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-            "DoseValue": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "EraLength": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtStart": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "AgeAtEnd": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-            "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-            "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "DateOffsetStrategy": {
-      "description": "Date offset end strategy. Defines cohort end as a fixed offset from a date field. Serialized in JSON as: {\"DateOffset\": {...}}",
-      "properties": {
-        "Offset": { "type": "integer", "description": "Number of days to offset" },
-        "DateField": { "type": "string", "description": "Date field to offset from (e.g. 'StartDate', 'EndDate')" }
-      },
-      "required": ["Offset", "DateField"],
-      "type": "object"
-    },
-    "CustomEraStrategy": {
-      "description": "Custom era end strategy. Defines cohort end based on drug era persistence. Serialized in JSON as: {\"CustomEra\": {...}}",
-      "properties": {
-        "DrugCodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-        "GapDays": { "default": 0, "type": "integer" },
-        "Offset": { "default": 0, "type": "integer" },
-        "DaysSupplyOverride": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
       },
       "type": "object"
     },
@@ -558,247 +108,9 @@
       "properties": {
         "name": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
         "description": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "expression": { "anyOf": [{ "$ref": "#/$defs/CriteriaGroup" }, { "type": "null" }], "default": null }
+        "expression": { "anyOf": [{ "$ref": "./groups.schema.json#/$defs/CriteriaGroup" }, { "type": "null" }], "default": null }
       },
       "type": "object"
-    },
-    "CriteriaGroup": {
-      "description": "A group of criteria combined with logical operators. Supports nested groups, demographic criteria, and occurrence counts.",
-      "properties": {
-        "Type": {
-          "anyOf": [{ "type": "string" }, { "type": "null" }],
-          "default": null,
-          "description": "Logical operator: 'ALL' for AND, 'ANY' for OR, 'AT_LEAST' for count-based"
-        },
-        "Count": {
-          "anyOf": [{ "type": "integer" }, { "type": "null" }],
-          "default": null,
-          "description": "Minimum count when Type is 'AT_LEAST'"
-        },
-        "CriteriaList": {
-          "anyOf": [{ "items": { "$ref": "#/$defs/CorelatedCriteria" }, "type": "array" }, { "type": "null" }],
-          "default": null
-        },
-        "Groups": {
-          "anyOf": [{ "items": { "$ref": "#/$defs/CriteriaGroup" }, "type": "array" }, { "type": "null" }],
-          "default": null
-        },
-        "DemographicCriteriaList": {
-          "anyOf": [{ "items": { "$ref": "#/$defs/DemographicCriteria" }, "type": "array" }, { "type": "null" }],
-          "default": null
-        }
-      },
-      "type": "object"
-    },
-    "CorelatedCriteria": {
-      "description": "A criteria with occurrence parameters and time windows. Associates a domain criteria with start/end windows and occurrence constraints. NOTE: The name 'Corelated' is deliberately misspelled to match the Java implementation.",
-      "allOf": [
-        { "$ref": "#/$defs/WindowedCriteria" },
-        {
-          "properties": {
-            "Occurrence": { "anyOf": [{ "$ref": "#/$defs/Occurrence" }, { "type": "null" }], "default": null }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "WindowedCriteria": {
-      "description": "A criteria with time windows defining when it must occur relative to an index date.",
-      "properties": {
-        "Criteria": { "$ref": "#/$defs/Criteria" },
-        "StartWindow": { "anyOf": [{ "$ref": "#/$defs/Window" }, { "type": "null" }], "default": null },
-        "EndWindow": { "anyOf": [{ "$ref": "#/$defs/Window" }, { "type": "null" }], "default": null },
-        "RestrictVisit": { "default": false, "type": "boolean" },
-        "IgnoreObservationPeriod": { "default": false, "type": "boolean" }
-      },
-      "required": ["Criteria"],
-      "type": "object"
-    },
-    "Occurrence": {
-      "description": "Occurrence count parameters for correlated criteria. Defines how many times a criteria must occur (EXACTLY n, AT_MOST n, or AT_LEAST n).",
-      "properties": {
-        "Type": { "type": "integer", "description": "0=EXACTLY, 1=AT_MOST, 2=AT_LEAST" },
-        "Count": { "type": "integer" },
-        "IsDistinct": { "default": false, "type": "boolean" },
-        "CountColumn": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
-      },
-      "required": ["Type", "Count"],
-      "type": "object"
-    },
-    "DemographicCriteria": {
-      "description": "Demographic constraints for a criteria group. Filters based on patient demographics like age, gender, race, and ethnicity.",
-      "properties": {
-        "Age": { "anyOf": [{ "$ref": "#/$defs/NumericRange" }, { "type": "null" }], "default": null },
-        "Gender": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-        "GenderCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-        "Race": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-        "RaceCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-        "Ethnicity": { "anyOf": [{ "items": { "$ref": "#/$defs/Concept" }, "type": "array" }, { "type": "null" }], "default": null },
-        "EthnicityCS": { "anyOf": [{ "$ref": "#/$defs/ConceptSetSelection" }, { "type": "null" }], "default": null },
-        "OccurrenceStartDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null },
-        "OccurrenceEndDate": { "anyOf": [{ "$ref": "#/$defs/DateRange" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "ConceptSet": {
-      "description": "A named set of concepts with an expression defining inclusion criteria.",
-      "properties": {
-        "id": { "type": "integer", "description": "Unique identifier referencing this concept set from criteria" },
-        "name": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "expression": { "anyOf": [{ "$ref": "#/$defs/ConceptSetExpression" }, { "type": "null" }], "default": null }
-      },
-      "required": ["id"],
-      "type": "object"
-    },
-    "ConceptSetExpression": {
-      "description": "Defines the inclusion criteria for a concept set, including explicit concepts and hierarchical relationships.",
-      "properties": {
-        "items": { "anyOf": [{ "items": { "$ref": "#/$defs/ConceptSetItem" }, "type": "array" }, { "type": "null" }], "default": null },
-        "concept": { "anyOf": [{ "$ref": "#/$defs/Concept" }, { "type": "null" }], "default": null },
-        "isExcluded": { "default": false, "type": "boolean" },
-        "includeMapped": { "default": false, "type": "boolean" },
-        "includeDescendants": { "default": false, "type": "boolean" }
-      },
-      "type": "object"
-    },
-    "ConceptSetItem": {
-      "description": "An individual item within a concept set expression.",
-      "properties": {
-        "concept": { "anyOf": [{ "$ref": "#/$defs/Concept" }, { "type": "null" }], "default": null },
-        "isExcluded": { "default": false, "type": "boolean" },
-        "includeMapped": { "default": false, "type": "boolean" },
-        "includeDescendants": { "default": false, "type": "boolean" }
-      },
-      "type": "object"
-    },
-    "Concept": {
-      "description": "A concept from the OMOP standardized vocabulary.",
-      "properties": {
-        "CONCEPT_ID": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-        "CONCEPT_NAME": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "CONCEPT_CODE": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "CONCEPT_CLASS_ID": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "STANDARD_CONCEPT": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "INVALID_REASON": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "DOMAIN_ID": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "VOCABULARY_ID": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "ResultLimit": {
-      "description": "Specifies a limit type for qualifying events or the final expression.",
-      "properties": {
-        "Type": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "Period": {
-      "description": "A time period with optional start and end dates.",
-      "properties": {
-        "StartDate": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "EndDate": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "DateRange": {
-      "description": "A date-based range filter with an operator, value, and optional extent.",
-      "properties": {
-        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "Value": { "anyOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }], "default": null },
-        "Extent": { "anyOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "NumericRange": {
-      "description": "A numeric range filter with an operator, value, and optional extent.",
-      "properties": {
-        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "Value": { "anyOf": [{ "type": "integer" }, { "type": "number" }, { "type": "null" }], "default": null },
-        "Extent": { "anyOf": [{ "type": "integer" }, { "type": "number" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "DateAdjustment": {
-      "description": "Adjusts start and end dates by a fixed offset, optionally switching to a different date type.",
-      "properties": {
-        "startOffset": { "type": "integer" },
-        "endOffset": { "type": "integer" },
-        "startWith": { "anyOf": [{ "$ref": "#/$defs/DateType" }, { "type": "null" }], "default": null },
-        "endWith": { "anyOf": [{ "$ref": "#/$defs/DateType" }, { "type": "null" }], "default": null }
-      },
-      "required": ["startOffset", "endOffset"],
-      "type": "object"
-    },
-    "ObservationFilter": {
-      "description": "Defines the observation window around the index date for primary criteria.",
-      "properties": {
-        "PriorDays": { "type": "integer" },
-        "PostDays": { "type": "integer" }
-      },
-      "required": ["PriorDays", "PostDays"],
-      "type": "object"
-    },
-    "CollapseSettings": {
-      "description": "Settings for collapsing overlapping cohort episodes into contiguous periods.",
-      "properties": {
-        "EraPad": { "type": "integer" },
-        "CollapseType": { "anyOf": [{ "type": "string", "enum": ["ERA", "collapse", "no_collapse"] }, { "type": "null" }], "default": null }
-      },
-      "required": ["EraPad"],
-      "type": "object"
-    },
-    "Window": {
-      "description": "A time window with start and end bounds relative to an index date.",
-      "properties": {
-        "Start": { "anyOf": [{ "$ref": "#/$defs/WindowBound" }, { "type": "null" }], "default": null },
-        "End": { "anyOf": [{ "$ref": "#/$defs/WindowBound" }, { "type": "null" }], "default": null },
-        "UseEventEnd": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null },
-        "UseIndexEnd": { "anyOf": [{ "type": "boolean" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "WindowBound": {
-      "description": "A single bound of a time window, with a coefficient (before/after) and optional number of days.",
-      "properties": {
-        "Coeff": { "type": "integer", "description": "Direction: -1 = before, 1 = after" },
-        "Days": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
-      },
-      "required": ["Coeff"],
-      "type": "object"
-    },
-    "TextFilter": {
-      "description": "A text-based filter with comparison operator.",
-      "properties": {
-        "Text": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
-        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
-      },
-      "type": "object"
-    },
-    "ConceptSetSelection": {
-      "description": "Selects a concept set by ID, optionally as an exclusion.",
-      "properties": {
-        "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
-        "IsExclusion": { "type": "boolean" }
-      },
-      "required": ["IsExclusion"],
-      "type": "object"
-    },
-    "DateType": {
-      "description": "Enumeration of date types used in DateAdjustment.",
-      "enum": ["start_date", "end_date"],
-      "type": "string"
-    },
-    "CollapseType": {
-      "description": "Enumeration of collapse types.",
-      "enum": ["ERA", "collapse", "no_collapse"],
-      "type": "string"
-    },
-    "GeoCriteria": {
-      "description": "Base class for geographic criteria (extends Criteria).",
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        { "properties": {}, "type": "object" }
-      ]
     }
   }
 }
