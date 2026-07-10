@@ -1,3 +1,5 @@
+from .criteria_registry import CRITERIA_REGISTRY, get_all_criteria, get_criteria_class, register_criteria
+
 from .base import CirceBaseModel
 from .core import (
     CirceBaseModel,
@@ -40,6 +42,10 @@ from .groups import CorelatedCriteria, CriteriaGroup, DemographicCriteria, Inclu
 from .vocabulary import Concept, ConceptSet, ConceptSetExpression, ConceptSetItem
 
 __all__ = [
+    "CRITERIA_REGISTRY",
+    "get_all_criteria",
+    "get_criteria_class",
+    "register_criteria",
     "CirceBaseModel",
     "CollapseType",
     "CollapseSettings",

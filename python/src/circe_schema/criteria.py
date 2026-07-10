@@ -11,6 +11,7 @@ from .core import (
     Period,
     TextFilter,
 )
+from .criteria_registry import register_criteria
 from .vocabulary import Concept
 
 if TYPE_CHECKING:
@@ -43,6 +44,7 @@ class Criteria(CirceBaseModel):
         return data
 
 
+@register_criteria("ConditionOccurrence")
 class ConditionOccurrence(Criteria):
     """Condition occurrence criteria. Filters on condition diagnosis records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -65,6 +67,7 @@ class ConditionOccurrence(Criteria):
     condition_status_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("ConditionStatusCS", "conditionStatusCS"), serialization_alias="ConditionStatusCS")
 
 
+@register_criteria("DrugExposure")
 class DrugExposure(Criteria):
     """Drug exposure criteria. Filters on drug administration records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -94,6 +97,7 @@ class DrugExposure(Criteria):
     lot_number: Optional[TextFilter] = Field(default=None, validation_alias=AliasChoices("LotNumber", "lotNumber"), serialization_alias="LotNumber")
 
 
+@register_criteria("ProcedureOccurrence")
 class ProcedureOccurrence(Criteria):
     """Procedure occurrence criteria. Filters on procedure records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -116,6 +120,7 @@ class ProcedureOccurrence(Criteria):
     modifier_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("ModifierCS", "modifierCS"), serialization_alias="ModifierCS")
 
 
+@register_criteria("VisitOccurrence")
 class VisitOccurrence(Criteria):
     """Visit occurrence criteria. Filters on visit records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -137,6 +142,7 @@ class VisitOccurrence(Criteria):
     place_of_service_location: Optional[int] = Field(default=None, validation_alias=AliasChoices("PlaceOfServiceLocation", "placeOfServiceLocation"), serialization_alias="PlaceOfServiceLocation")
 
 
+@register_criteria("Observation")
 class Observation(Criteria):
     """Observation criteria. Filters on observation records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -164,6 +170,7 @@ class Observation(Criteria):
     visit_type_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("VisitTypeCS", "visitTypeCS"), serialization_alias="VisitTypeCS")
 
 
+@register_criteria("Measurement")
 class Measurement(Criteria):
     """Measurement criteria. Filters on measurement records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -196,6 +203,7 @@ class Measurement(Criteria):
     visit_type_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("VisitTypeCS", "visitTypeCS"), serialization_alias="VisitTypeCS")
 
 
+@register_criteria("DeviceExposure")
 class DeviceExposure(Criteria):
     """Device exposure criteria. Filters on device exposure records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -217,6 +225,7 @@ class DeviceExposure(Criteria):
     visit_type_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("VisitTypeCS", "visitTypeCS"), serialization_alias="VisitTypeCS")
 
 
+@register_criteria("Specimen")
 class Specimen(Criteria):
     """Specimen criteria. Filters on specimen records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -240,6 +249,7 @@ class Specimen(Criteria):
     gender_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("GenderCS", "genderCS"), serialization_alias="GenderCS")
 
 
+@register_criteria("Death")
 class Death(Criteria):
     """Death criteria. Filters on death records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -256,6 +266,7 @@ class Death(Criteria):
     gender_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("GenderCS", "genderCS"), serialization_alias="GenderCS")
 
 
+@register_criteria("VisitDetail")
 class VisitDetail(Criteria):
     """Visit detail criteria. Filters on visit detail records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -279,6 +290,7 @@ class VisitDetail(Criteria):
     discharge_to_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("DischargeToCS", "dischargeToCS"), serialization_alias="DischargeToCS")
 
 
+@register_criteria("ObservationPeriod")
 class ObservationPeriod(Criteria):
     """Observation period criteria. Filters on observation period records in the OMOP CDM."""
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
@@ -292,6 +304,7 @@ class ObservationPeriod(Criteria):
     age_at_end: Optional[NumericRange] = Field(default=None, validation_alias=AliasChoices("AgeAtEnd", "ageAtEnd"), serialization_alias="AgeAtEnd")
 
 
+@register_criteria("PayerPlanPeriod")
 class PayerPlanPeriod(Criteria):
     """Payer plan period criteria. Filters on payer plan period records in the OMOP CDM."""
     first: Optional[bool] = Field(default=None, validation_alias=AliasChoices("First", "first"), serialization_alias="First")
@@ -313,11 +326,13 @@ class PayerPlanPeriod(Criteria):
     stop_reason_source_concept: Optional[int] = Field(default=None, validation_alias=AliasChoices("StopReasonSourceConcept", "stopReasonSourceConcept"), serialization_alias="StopReasonSourceConcept")
 
 
+@register_criteria("LocationRegion")
 class LocationRegion(Criteria):
     """Location region criteria. Filters on geographic location/region in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
 
 
+@register_criteria("ConditionEra")
 class ConditionEra(Criteria):
     """Condition era criteria. Filters on condition era records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -332,6 +347,7 @@ class ConditionEra(Criteria):
     gender_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("GenderCS", "genderCS"), serialization_alias="GenderCS")
 
 
+@register_criteria("DrugEra")
 class DrugEra(Criteria):
     """Drug era criteria. Filters on drug era records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")
@@ -347,6 +363,7 @@ class DrugEra(Criteria):
     gender_cs: Optional[ConceptSetSelection] = Field(default=None, validation_alias=AliasChoices("GenderCS", "genderCS"), serialization_alias="GenderCS")
 
 
+@register_criteria("DoseEra")
 class DoseEra(Criteria):
     """Dose era criteria. Filters on dose era records in the OMOP CDM."""
     codeset_id: Optional[int] = Field(default=None, validation_alias=AliasChoices("CodesetId", "codesetId"), serialization_alias="CodesetId")

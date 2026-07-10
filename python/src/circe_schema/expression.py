@@ -9,6 +9,7 @@ from .core import (
     Period,
     ResultLimit,
 )
+from .criteria_registry import get_all_criteria
 from .end_strategy import CustomEraStrategy, DateOffsetStrategy, EndStrategy
 from .groups import CriteriaGroup, CriteriaType, InclusionRule
 
@@ -147,43 +148,7 @@ class CohortExpression(CirceBaseModel):
         if not v or not isinstance(v, list):
             return v
 
-        from .criteria import (
-            ConditionEra,
-            ConditionOccurrence,
-            Death,
-            DeviceExposure,
-            DoseEra,
-            DrugEra,
-            DrugExposure,
-            LocationRegion,
-            Measurement,
-            Observation,
-            ObservationPeriod,
-            PayerPlanPeriod,
-            ProcedureOccurrence,
-            Specimen,
-            VisitDetail,
-            VisitOccurrence,
-        )
-
-        criteria_class_map = {
-            "ConditionOccurrence": ConditionOccurrence,
-            "DrugExposure": DrugExposure,
-            "ProcedureOccurrence": ProcedureOccurrence,
-            "VisitOccurrence": VisitOccurrence,
-            "Observation": Observation,
-            "Measurement": Measurement,
-            "DeviceExposure": DeviceExposure,
-            "Specimen": Specimen,
-            "Death": Death,
-            "VisitDetail": VisitDetail,
-            "ObservationPeriod": ObservationPeriod,
-            "PayerPlanPeriod": PayerPlanPeriod,
-            "LocationRegion": LocationRegion,
-            "ConditionEra": ConditionEra,
-            "DrugEra": DrugEra,
-            "DoseEra": DoseEra,
-        }
+        criteria_class_map = get_all_criteria()
 
         deserialized = []
         for item in v:
@@ -225,42 +190,7 @@ class CohortExpression(CirceBaseModel):
         if "CriteriaList" in result:
             criteria_list = result.get("CriteriaList", [])
             if criteria_list and isinstance(criteria_list, list):
-                from .criteria import (
-                    ConditionEra,
-                    ConditionOccurrence,
-                    Death,
-                    DeviceExposure,
-                    DoseEra,
-                    DrugEra,
-                    DrugExposure,
-                    LocationRegion,
-                    Measurement,
-                    Observation,
-                    ObservationPeriod,
-                    PayerPlanPeriod,
-                    ProcedureOccurrence,
-                    Specimen,
-                    VisitDetail,
-                    VisitOccurrence,
-                )
-                criteria_class_map = {
-                    "ConditionOccurrence": ConditionOccurrence,
-                    "DrugExposure": DrugExposure,
-                    "ProcedureOccurrence": ProcedureOccurrence,
-                    "VisitOccurrence": VisitOccurrence,
-                    "Observation": Observation,
-                    "Measurement": Measurement,
-                    "DeviceExposure": DeviceExposure,
-                    "Specimen": Specimen,
-                    "Death": Death,
-                    "VisitDetail": VisitDetail,
-                    "ObservationPeriod": ObservationPeriod,
-                    "PayerPlanPeriod": PayerPlanPeriod,
-                    "LocationRegion": LocationRegion,
-                    "ConditionEra": ConditionEra,
-                    "DrugEra": DrugEra,
-                    "DoseEra": DoseEra,
-                }
+                criteria_class_map = get_all_criteria()
                 deserialized = []
                 for item in criteria_list:
                     if not isinstance(item, dict):
@@ -297,42 +227,7 @@ class CohortExpression(CirceBaseModel):
     def _deserialize_criteria_group(cls, data: dict) -> Any:
         result = dict(data)
         if "CriteriaList" in result and result["CriteriaList"]:
-            from .criteria import (
-                ConditionEra,
-                ConditionOccurrence,
-                Death,
-                DeviceExposure,
-                DoseEra,
-                DrugEra,
-                DrugExposure,
-                LocationRegion,
-                Measurement,
-                Observation,
-                ObservationPeriod,
-                PayerPlanPeriod,
-                ProcedureOccurrence,
-                Specimen,
-                VisitDetail,
-                VisitOccurrence,
-            )
-            criteria_class_map = {
-                "ConditionOccurrence": ConditionOccurrence,
-                "DrugExposure": DrugExposure,
-                "ProcedureOccurrence": ProcedureOccurrence,
-                "VisitOccurrence": VisitOccurrence,
-                "Observation": Observation,
-                "Measurement": Measurement,
-                "DeviceExposure": DeviceExposure,
-                "Specimen": Specimen,
-                "Death": Death,
-                "VisitDetail": VisitDetail,
-                "ObservationPeriod": ObservationPeriod,
-                "PayerPlanPeriod": PayerPlanPeriod,
-                "LocationRegion": LocationRegion,
-                "ConditionEra": ConditionEra,
-                "DrugEra": DrugEra,
-                "DoseEra": DoseEra,
-            }
+            criteria_class_map = get_all_criteria()
             criteria_list = list(result["CriteriaList"])
             for i, item in enumerate(criteria_list):
                 if isinstance(item, dict):
