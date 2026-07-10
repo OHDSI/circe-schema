@@ -7,7 +7,7 @@
   "$defs": {
     "VisitOccurrence": {
       "allOf": [
-        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        { "$ref": "./base.schema.json#/$defs/Criteria" },
         {
           "properties": {
             "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
@@ -34,7 +34,7 @@
     },
     "VisitDetail": {
       "allOf": [
-        { "$ref": "../common.schema.json#/$defs/Criteria" },
+        { "$ref": "./base.schema.json#/$defs/Criteria" },
         {
           "properties": {
             "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },

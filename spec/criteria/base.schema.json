@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OHDSI/circe-schema/spec/criteria/base.schema.json",
+  "title": "CIRCE Criteria Base Schema",
+  "description": "Base criteria type and geographic criteria for the CIRCE cohort expression data model. All domain-specific criteria types extend this base. This file is standalone to avoid circular dependencies between common and groups schemas.",
+  "version": "1.0.0",
+  "$defs": {
+    "Criteria": {
+      "description": "Base criteria type. All domain-specific criteria inherit from this. In JSON, each criteria is serialized with a polymorphic wrapper: {\"ConditionOccurrence\": {...}}. The discriminator is the single key in the object. Polymorphic base: each concrete type extends this with domain-specific fields and wraps in {\"TypeName\": {...}}",
+      "properties": {
+        "DateAdjustment": {
+          "anyOf": [{ "$ref": "../common.schema.json#/$defs/DateAdjustment" }, { "type": "null" }],
+          "default": null
+        },
+        "CorrelatedCriteria": {
+          "anyOf": [{ "$ref": "../groups.schema.json#/$defs/CriteriaGroup" }, { "type": "null" }],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "GeoCriteria": {
+      "description": "Base class for geographic criteria (extends Criteria).",
+      "allOf": [
+        { "$ref": "#/$defs/Criteria" },
+        { "properties": {}, "type": "object" }
+      ]
+    }
+  }
+}

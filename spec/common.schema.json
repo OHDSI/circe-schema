@@ -113,26 +113,41 @@
       "enum": ["ERA", "collapse", "no_collapse"],
       "type": "string"
     },
-    "Criteria": {
-      "description": "Base criteria type. All domain-specific criteria inherit from this. In JSON, each criteria is serialized with a polymorphic wrapper: {\"ConditionOccurrence\": {...}}. The discriminator is the single key in the object. Polymorphic base: each concrete type extends this with domain-specific fields and wraps in {\"TypeName\": {...}}",
+    "WindowBound": {
+      "description": "A single bound of a time window, with a coefficient (before/after) and optional number of days.",
       "properties": {
-        "DateAdjustment": {
-          "anyOf": [{ "$ref": "#/$defs/DateAdjustment" }, { "type": "null" }],
-          "default": null
-        },
-        "CorrelatedCriteria": {
-          "anyOf": [{ "$ref": "./groups.schema.json#/$defs/CriteriaGroup" }, { "type": "null" }],
-          "default": null
-        }
+        "Coeff": { "type": "integer", "description": "Direction: -1 = before, 1 = after" },
+        "Days": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null }
+      },
+      "required": ["Coeff"],
+      "type": "object"
+    },
+    "TextFilter": {
+      "description": "A text-based filter with comparison operator.",
+      "properties": {
+        "Text": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null },
+        "Op": { "anyOf": [{ "type": "string" }, { "type": "null" }], "default": null }
       },
       "type": "object"
     },
-    "GeoCriteria": {
-      "description": "Base class for geographic criteria (extends Criteria).",
-      "allOf": [
-        { "$ref": "#/$defs/Criteria" },
-        { "properties": {}, "type": "object" }
-      ]
+    "ConceptSetSelection": {
+      "description": "Selects a concept set by ID, optionally as an exclusion.",
+      "properties": {
+        "CodesetId": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "default": null },
+        "IsExclusion": { "type": "boolean" }
+      },
+      "required": ["IsExclusion"],
+      "type": "object"
+    },
+    "DateType": {
+      "description": "Enumeration of date types used in DateAdjustment.",
+      "enum": ["start_date", "end_date"],
+      "type": "string"
+    },
+    "CollapseType": {
+      "description": "Enumeration of collapse types.",
+      "enum": ["ERA", "collapse", "no_collapse"],
+      "type": "string"
     }
   }
 }

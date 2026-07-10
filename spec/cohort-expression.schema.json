@@ -60,7 +60,7 @@
           "description": "Strategy for determining cohort end dates. Polymorphic: use {\"DateOffset\":{...}} or {\"CustomEra\":{...}}"
         },
         "CensoringCriteria": {
-          "anyOf": [{ "items": { "$ref": "./common.schema.json#/$defs/Criteria" }, "type": "array" }, { "type": "null" }],
+          "anyOf": [{ "items": { "$ref": "./criteria/base.schema.json#/$defs/Criteria" }, "type": "array" }, { "type": "null" }],
           "default": null,
           "description": "Criteria that censor (end) cohort episodes early"
         },
@@ -86,7 +86,7 @@
       "description": "Primary criteria that define cohort entry events. Each event is defined by a domain-specific criteria object (e.g. ConditionOccurrence, DrugExposure).",
       "properties": {
         "CriteriaList": {
-          "items": { "$ref": "./common.schema.json#/$defs/Criteria" },
+          "items": { "$ref": "./criteria/base.schema.json#/$defs/Criteria" },
           "type": "array",
           "description": "List of domain-specific criteria wrapped in their type name"
         },

@@ -19,7 +19,7 @@
     "WindowedCriteria": {
       "description": "A criteria with time windows defining when it must occur relative to an index date.",
       "properties": {
-        "Criteria": { "$ref": "./common.schema.json#/$defs/Criteria" },
+        "Criteria": { "$ref": "./criteria/base.schema.json#/$defs/Criteria" },
         "StartWindow": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/Window" }, { "type": "null" }], "default": null },
         "EndWindow": { "anyOf": [{ "$ref": "./common.schema.json#/$defs/Window" }, { "type": "null" }], "default": null },
         "RestrictVisit": { "default": false, "type": "boolean" },
