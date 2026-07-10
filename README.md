@@ -1,5 +1,7 @@
 # CIRCE Schema
 
+** UNDER DRAFT/DEVELOPMENT ** code and schema definitions in this repository and not currently in a usable state.
+
 Language-agnostic schema for OMOP CDM cohort definitions.
 
 This repository defines the **data model** for CIRCE cohort expressions — the standard used by [OHDSI Circe-be (Java)](https://github.com/OHDSI/circe-be) and [OHDSI CircePy (Python)](https://github.com/OHDSI/CircePy) for representing cohort definitions in the OMOP Common Data Model.
@@ -15,7 +17,8 @@ This repository defines the **data model** for CIRCE cohort expressions — the 
 - Not a SQL generation engine (see Circe-be and CircePy for that)
 - Not a validation framework
 - Not tied to any specific OMOP CDM version
-
+- A usable implementation. This only exists to move towards a shared conformity across cohort definitions within ohdsi
+ 
 ## Repository structure
 
 ```
