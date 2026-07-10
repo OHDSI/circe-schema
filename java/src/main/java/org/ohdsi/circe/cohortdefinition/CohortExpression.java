@@ -2,10 +2,9 @@ package org.ohdsi.circe.cohortdefinition;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.ohdsi.analysis.Utils;
 import org.ohdsi.circe.vocabulary.ConceptSet;
 
 import java.util.ArrayList;
@@ -58,15 +57,39 @@ public class CohortExpression {
         this.cdmVersionRange = cdmVersionRange;
     }
 
+    private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
+
+    private static ObjectMapper createObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper;
+    }
+
+    public static ObjectMapper getObjectMapper() {
+        return OBJECT_MAPPER;
+    }
+
+    public static void registerCriteriaSubtype(Class<? extends Criteria> clazz) {
+        OBJECT_MAPPER.registerSubtypes(clazz);
+        com.fasterxml.jackson.annotation.JsonTypeName annotation =
+                clazz.getAnnotation(com.fasterxml.jackson.annotation.JsonTypeName.class);
+        if (annotation != null) {
+            CriteriaRegistry.add(annotation.value(), clazz);
+        }
+    }
+
     public static CohortExpression fromJson(String json) {
-        return Utils.deserialize(json, new TypeReference<CohortExpression>() {});
+        try {
+            return OBJECT_MAPPER.readValue(json, CohortExpression.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse CohortExpression JSON", e);
+        }
     }
 
     public String toJson() {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            return mapper.writeValueAsString(this);
+            return OBJECT_MAPPER.writeValueAsString(this);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize CohortExpression", e);
         }
