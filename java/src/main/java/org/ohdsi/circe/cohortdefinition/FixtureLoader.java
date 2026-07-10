@@ -1,4 +1,4 @@
-package org.ohdsi.circe.schema.util;
+package org.ohdsi.circe.cohortdefinition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

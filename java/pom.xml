@@ -46,12 +46,26 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ohdsi</groupId>
+            <artifactId>standardized-analysis-utils</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>ohdsi</id>
+            <name>repo.ohdsi.org</name>
+            <url>https://repo.ohdsi.org/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>

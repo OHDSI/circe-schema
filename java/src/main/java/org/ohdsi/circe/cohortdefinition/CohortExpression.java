@@ -1,9 +1,12 @@
-package org.ohdsi.circe.schema.model;
+package org.ohdsi.circe.cohortdefinition;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.ohdsi.analysis.Utils;
+import org.ohdsi.circe.vocabulary.ConceptSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,56 +21,54 @@ public class CohortExpression {
     public PrimaryCriteria primaryCriteria;
 
     @JsonProperty("AdditionalCriteria")
-    public Groups.CriteriaGroup additionalCriteria;
+    public CriteriaGroup additionalCriteria;
 
     @JsonProperty("ConceptSets")
-    public List<Vocabulary.ConceptSet> conceptSets = new ArrayList<>();
+    public ConceptSet[] conceptSets;
 
     @JsonProperty("QualifiedLimit")
-    public CoreTypes.ResultLimit qualifiedLimit;
+    public ResultLimit qualifiedLimit = new ResultLimit();
 
     @JsonProperty("ExpressionLimit")
-    public CoreTypes.ResultLimit expressionLimit;
+    public ResultLimit expressionLimit = new ResultLimit();
 
     @JsonProperty("InclusionRules")
-    public List<Groups.InclusionRule> inclusionRules = new ArrayList<>();
+    public List<InclusionRule> inclusionRules = new ArrayList<>();
 
     @JsonProperty("EndStrategy")
-    public BaseEndStrategy endStrategy;
+    public EndStrategy endStrategy;
 
     @JsonProperty("CensoringCriteria")
-    public List<Criteria> censoringCriteria = new ArrayList<>();
+    public Criteria[] censoringCriteria;
 
     @JsonProperty("CollapseSettings")
-    public CoreTypes.CollapseSettings collapseSettings;
+    public CollapseSettings collapseSettings = new CollapseSettings();
 
     @JsonProperty("CensorWindow")
-    public CoreTypes.Period censorWindow;
+    public Period censorWindow;
 
     @JsonProperty("cdmVersionRange")
-    public String cdmVersionRange;
+    private String cdmVersionRange;
+
+    public String getCdmVersionRange() {
+        return cdmVersionRange;
+    }
+
+    public void setCdmVersionRange(String cdmVersionRange) {
+        this.cdmVersionRange = cdmVersionRange;
+    }
 
     public static CohortExpression fromJson(String json) {
-        try {
-            ObjectMapper mapper = createObjectMapper();
-            return mapper.readValue(json, CohortExpression.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to parse CohortExpression JSON", e);
-        }
+        return Utils.deserialize(json, new TypeReference<CohortExpression>() {});
     }
 
     public String toJson() {
         try {
-            ObjectMapper mapper = createObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             return mapper.writeValueAsString(this);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize CohortExpression", e);
         }
-    }
-
-    public static ObjectMapper createObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        return mapper;
     }
 }

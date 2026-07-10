@@ -1,11 +1,8 @@
-package org.ohdsi.circe.schema;
+package org.ohdsi.circe.cohortdefinition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import org.ohdsi.circe.schema.model.CohortExpression;
-import org.ohdsi.circe.schema.util.FixtureLoader;
 
 import java.io.File;
 
@@ -22,7 +19,6 @@ public class ConformanceTest {
         CohortExpression cohort = CohortExpression.fromJson(json);
         String serialized = cohort.toJson();
 
-        // Re-parse
         CohortExpression cohort2 = CohortExpression.fromJson(serialized);
 
         Assertions.assertNotNull(cohort2);
@@ -31,26 +27,24 @@ public class ConformanceTest {
             "Title mismatch for " + fixtureName
         );
 
-        int csCount = cohort.conceptSets != null ? cohort.conceptSets.size() : 0;
-        int csCount2 = cohort2.conceptSets != null ? cohort2.conceptSets.size() : 0;
+        int csCount = cohort.conceptSets != null ? cohort.conceptSets.length : 0;
+        int csCount2 = cohort2.conceptSets != null ? cohort2.conceptSets.length : 0;
         Assertions.assertEquals(csCount, csCount2, "Concept set count mismatch for " + fixtureName);
 
         int irCount = cohort.inclusionRules != null ? cohort.inclusionRules.size() : 0;
         int irCount2 = cohort2.inclusionRules != null ? cohort2.inclusionRules.size() : 0;
         Assertions.assertEquals(irCount, irCount2, "Inclusion rule count mismatch for " + fixtureName);
 
-        // Verify concept set IDs preserved
         if (cohort.conceptSets != null && cohort2.conceptSets != null) {
-            for (int i = 0; i < Math.min(cohort.conceptSets.size(), cohort2.conceptSets.size()); i++) {
+            for (int i = 0; i < Math.min(cohort.conceptSets.length, cohort2.conceptSets.length); i++) {
                 Assertions.assertEquals(
-                    cohort.conceptSets.get(i).id,
-                    cohort2.conceptSets.get(i).id,
+                    cohort.conceptSets[i].id,
+                    cohort2.conceptSets[i].id,
                     "ConceptSet id mismatch for " + fixtureName + " at index " + i
                 );
             }
         }
 
-        // Verify inclusion rule names preserved
         if (cohort.inclusionRules != null && cohort2.inclusionRules != null) {
             for (int i = 0; i < Math.min(cohort.inclusionRules.size(), cohort2.inclusionRules.size()); i++) {
                 Assertions.assertEquals(
